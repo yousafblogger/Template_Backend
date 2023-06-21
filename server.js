@@ -1,4 +1,5 @@
 import express from "express";
+import cloudinary from "cloudinary";
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -29,4 +30,4 @@ fs.readdirSync("./routes").map((r) =>
 
 const port = process.env.PORT || 5000;
 
-app.listen(8080, console.log(`SERVER IS RUNNING ON ${port}`));
+app.listen(port, console.log(`SERVER IS RUNNING ON ${port}`));
