@@ -35,7 +35,7 @@ let Usage_detail = "";
 let Creater_name = "";
 let Creater_desc = "";
 let Tags = "";
-export const Fetch = async (req, res, next) => {
+export const Fetch = (req, res, next) => {
   try {
     const { id } = req.body;
     let Template_ID = id;
