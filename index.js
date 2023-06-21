@@ -30,4 +30,4 @@ fs.readdirSync("./routes").map((r) =>
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, console.log(`SERVER IS RUNNING ON ${port}`));
+app.listen(8080, console.log(`SERVER IS RUNNING ON ${8080}`));
