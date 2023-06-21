@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
 const bodyparser = require("body-parser");
-import fs from "fs";
+const fs = require("fs");
 require("dotenv").config();
 
 const app = express();
@@ -24,12 +24,15 @@ app.use(
 //Request Limit
 app.use(bodyparser.json({ limit: "5mb" }));
 //Routes
-// fs.readdirSync("./routes").map((r) =>
-//   app.use("/api", require(`./routes/${r}`))
-// );
-fs.readdirSync("./routes").map((r) =>
-  app.use("/api", require(`./routes/${r}`))
-);
+
+fs.readdirSync("./routes").map((r) => {
+  try {
+    app.use("/api", require(`./routes/${r}`));
+  } catch (error) {
+    console.error(`Error loading route file '${r}':`, error);
+  }
+});
+
 const port = process.env.PORT || 5000;
 
 app.listen(port, console.log(`SERVER IS RUNNING ON ${port}`));
