@@ -16,7 +16,7 @@ cloudinary.config({
 });
 //db
 mongoose
-  .connect('mongodb+srv://kamranalizx491:cg2o5PozyfTgmAyO@capcut-template.doyvuwy.mongodb.net/?retryWrites=true&w=majority', {})
+  .connect(process.env.DATABASE_URL, {})
   .then(() => console.log("Database Connected"))
   .catch((error) => console.log("Connection", error));
 //API request
