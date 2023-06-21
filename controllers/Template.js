@@ -75,6 +75,62 @@ export const Fetch = async (req, res, next) => {
 export const create = async (req, res) => {
   try {
     const { values } = req.body;
+    const temp = await Template.findOne({Template_ID:values.Template_ID});
+    if(temp){
+      return res.json({
+        error:"Template Already Exist",
+        status:false
+      })
+    }
+    if(!values.Template_Name){
+      return res.json({
+        error:"Please Add Template Name",
+        status:false
+      })
+    }
+    if(!values.Creater_name){
+      return res.json({
+        error:"Please Add Creater Name",
+        status:false
+      })
+    }
+    if(!values.Usage_detail){
+      return res.json({
+        error:"Please Add Usage Detail",
+        status:false
+      })
+    }
+    if(!values.Template_ID){
+      return res.json({
+        error:"Please Add Template Id",
+        status:false
+      })
+    }
+    if(!values.category){
+      return res.json({
+        error:"Please Add category",
+        status:false
+      })
+    }
+    if(!values.video_link){
+      return res.json({
+        error:"Please Add Video Link",
+        status:false
+      })
+    }
+    if(!values.poster_link){
+      return res.json({
+        error:"Please Add Poster Link",
+        status:false
+      })
+    }
+    if(!values.Tags){
+      return res.json({
+        error:"Please Add Tags",
+        status:false
+      })
+    }
+   
     const template = await new Template(values).save();
     return res.json({template, status:true});
   } catch (error) {

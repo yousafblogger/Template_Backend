@@ -30,6 +30,18 @@ export const Register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!email) {
+      return res.json({
+        error: "Please Enter Email",
+        status:false
+      });
+    }
+    if (!password) {
+      return res.json({
+        error: "Please Enter Password",
+        status:false
+      });
+    }
     const user = await User.findOne({ email });
     if (!user) {
       return res.json({

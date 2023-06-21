@@ -1,8 +1,8 @@
 import Settings from "../models/settings";
 export const createandupdate=async(req,res)=>{
  try{
-      const data=req.body.values;
-      const settings=await Settings.findByIdAndUpdate(req.params._id,data,{
+      const {values}=req.body;
+      const settings=await Settings.findByIdAndUpdate(req.params._id,values,{
         new:true,
       })
      return res.json({
