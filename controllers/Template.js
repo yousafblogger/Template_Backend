@@ -1,7 +1,35 @@
 import Template from "../models/template";
 const request = require("request");
 const cheerio = require("cheerio");
+const cron = require("node-cron");
 
+cron.schedule("0 */2 * * *", async () => {
+  let Usage_detail = "";
+  try {
+    const template = await Template.find();
+    for (let i = 0; i < template.length; i++) {
+      const url1 = `https://www.capcut.com/watch/${template[i].Template_ID}`;
+      request(url1, async function (error, response, html) {
+        if (!error && response.statusCode == 200) {
+          const $ = cheerio.load(html);
+          Usage_detail = $(".video-detail .actions-detail").text();
+          const templates = await Template.findByIdAndUpdate(
+            template[i]._id,
+            { Usage_detail: Usage_detail },
+            {
+              new: true,
+            }
+          );
+          console.log("Ok")
+        } else {
+          console.log("Error")
+        }
+      });
+    }
+  } catch (error) {
+    console.log("Error")
+  }
+});
 let Template_Name = "";
 let Usage_detail = "";
 let Creater_name = "";
