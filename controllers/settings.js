@@ -6,12 +6,15 @@ export const createandupdate=async(req,res)=>{
         new:true,
       })
      return res.json({
-        settings
+        settings,
+        status:true
+
      });
  }
  catch(error){
    return res.json({
-    error:"Create and update Failed"
+    error:"Create and update Failed",
+    status:false
    });
  }
 }
@@ -20,11 +23,13 @@ export const SiteSettings = async (req, res) => {
       const getSetting = await Settings.find();
       const setting=getSetting[0];
       return res.json({
-       setting
+       setting,
+       status:true
       });
     } catch (error) {
       res.json({
         error: "Get Settings Error",
+        status:false
       });
     }
   };

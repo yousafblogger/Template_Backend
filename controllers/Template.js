@@ -56,16 +56,19 @@ export const Fetch = async (req, res, next) => {
           Creater_desc,
           Creater_name,
           Tags,
+          status:true
         });
       } else {
         return res.json({
           error: error,
+          status:false
         });
       }
     });
   } catch (error) {
     return res.json({
       error: "Fetch Template Failed",
+      status:false
     });
   }
 };
@@ -73,10 +76,11 @@ export const create = async (req, res) => {
   try {
     const { values } = req.body;
     const template = await new Template(values).save();
-    return res.json(template);
+    return res.json({template, status:true});
   } catch (error) {
     return res.json({
       error: "Template Create Failed",
+      status:false
     });
   }
 };
@@ -90,10 +94,14 @@ export const update = async (req, res) => {
         new: true,
       }
     );
-    return res.json(templates);
+    return res.json({
+      templates,
+      status:true
+    });
   } catch (error) {
     return res.json({
       error: "Template update Failed",
+      status:false
     });
   }
 };
@@ -101,11 +109,12 @@ export const deletetemplate = async (req, res) => {
   try {
     await Template.findOneAndDelete({ _id: req.params._id });
     return res.json({
-      ok: true,
+      status: true,
     });
   } catch (error) {
     return res.json({
       error: "Delete Failed",
+      status:false
     });
   }
 };
@@ -117,10 +126,12 @@ export const AllTemplates = async (req, res) => {
       .populate("category", "_id name");
     return res.json({
       templates,
+      status:true
     });
   } catch (error) {
     res.json({
       error: "Fetch Templates Failed",
+      status:false
     });
   }
 };
@@ -131,15 +142,17 @@ export const SingleTemplate = async (req, res) => {
       "_id name"
     );
     if (template) {
-      return res.json({ template });
+      return res.json({ template, status:true });
     } else {
       return res.json({
         error: "Not Found",
+        status:false
       });
     }
   } catch (error) {
     res.json({
       error: "Fetch Single template Failed",
+      status:false
     });
   }
 };

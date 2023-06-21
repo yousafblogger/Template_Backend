@@ -34,12 +34,14 @@ export const login = async (req, res) => {
     if (!user) {
       return res.json({
         error: "User Not Found",
+        status:false
       });
     }
     const match = await comparepassword(password, user.password);
     if (!match) {
       return res.json({
         error: "Wrong Credential",
+        status:false
       });
     }
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
@@ -50,11 +52,13 @@ export const login = async (req, res) => {
     return res.json({
       token,
       user,
+      status:true
     });
   } catch (err) {
     console.log("Login Error", err);
     return res.json({
       error: "Try Again",
+      status:false
     });
   }
 };
@@ -78,11 +82,13 @@ export const UpdateProfile = async (req, res) => {
   user.secret=undefined;
   try {
     return res.json({
-      user
+      user,
+      status:true
     });
   } catch (err) {
     return res.json({
       error: "Update User Error",
+      status:false
     });
   }
 };

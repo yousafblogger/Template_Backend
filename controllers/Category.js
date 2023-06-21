@@ -8,10 +8,11 @@ export const create = async (req, res) => {
     if (category) return res.json({ error: "Category Already Exist" });
     values.slug = slug;
     const categories = await new Category(values).save();
-    return res.json(categories);
-  } catch (error) {  
+    return res.json({ categories, status: true });
+  } catch (error) {
     return res.json({
       error: "Category Create Failed",
+      status:false
     });
   }
 };
@@ -28,11 +29,12 @@ export const update = async (req, res) => {
       }
     );
     return res.json({
-      ok: true,
+      status: true,
     });
   } catch (error) {
     res.json({
       error: "Update Category Failed",
+      status:false
     });
   }
 };
@@ -40,11 +42,12 @@ export const deletecategory = async (req, res) => {
   try {
     await Category.findOneAndDelete({ slug: req.params.slug });
     return res.json({
-      ok: true,
+      status: true,
     });
   } catch (error) {
     return res.json({
       error: "Delete Failed",
+      status:false
     });
   }
 };
@@ -53,10 +56,12 @@ export const AllCategories = async (req, res) => {
     const category = await Category.find().sort({ createdAt: -1 });
     return res.json({
       category,
+      status: true,
     });
   } catch (error) {
     res.json({
       error: "Fetch Category Failed",
+      status:false
     });
   }
 };
@@ -64,15 +69,17 @@ export const SingleCategory = async (req, res) => {
   try {
     const category = await Category.findOne({ slug: req.params.slug });
     if (category) {
-      return res.json({ category });
+      return res.json({ category, status: true });
     } else {
       return res.json({
         error: "Not Found",
+        status:false
       });
     }
   } catch (error) {
     res.json({
       error: "Create Category Failed",
+      status:false
     });
   }
 };
