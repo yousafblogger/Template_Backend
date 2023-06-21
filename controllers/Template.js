@@ -38,6 +38,12 @@ let Tags = "";
 export const Fetch = async (req, res, next) => {
   try {
     const { id } = req.body;
+    if(!id){
+      return res.json({
+        error:"Please Add ID",
+        status:false
+      })
+    }
     let Template_ID = id;
     const url2 = `https://www.capcut.com/template-detail/${id}`;
     request(url2, function (error, response, html) {
