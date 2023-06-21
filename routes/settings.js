@@ -1,4 +1,4 @@
-import express from "express"
+const express=require("express")
 import { SiteSettings, createandupdate} from "../controllers/settings";
 import {  requireSigin } from "../middleware";
 const router=express.Router();

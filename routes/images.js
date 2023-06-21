@@ -1,4 +1,4 @@
-import express from "express";
+const express=require("express")
 import { handleimage } from "../controllers/imageUpload";
 import { requireSigin } from "../middleware";
 import formidable from "express-formidable";

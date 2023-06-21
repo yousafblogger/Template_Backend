@@ -1,4 +1,4 @@
-import express from "express";
+const express=require("express")
 import { requireSigin } from "../middleware";
 import { login, Register, UpdateProfile } from "../controllers/user";
 const router = express.Router();
