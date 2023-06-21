@@ -9,10 +9,10 @@ require("dotenv").config();
 
 const app = express();
 //db
-// mongoose
-//   .connect(process.env.DATABASE_URL, {})
-//   .then(() => console.log("Database Connected"))
-//   .catch((error) => console.log("Connection", error));
+mongoose
+  .connect(process.env.DATABASE_URL, {})
+  .then(() => console.log("Database Connected"))
+  .catch((error) => console.log("Connection", error));
 //API request
 app.use(morgan("dev"));
 //resolve Frontend and Backend
