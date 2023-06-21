@@ -33,3 +33,13 @@ export const SiteSettings = async (req, res) => {
       });
     }
   };
+  export const main = async (req, res) => {
+    try {
+      return res.json("Welcome to Capcut Template");
+    } catch (error) {
+      res.json({
+        error: "Get Settings Error",
+        status:false
+      });
+    }
+  };
