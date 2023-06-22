@@ -112,12 +112,6 @@ export const create = async (req, res) => {
         status:false
       })
     }
-    if(!values.category){
-      return res.json({
-        error:"Please Add category",
-        status:false
-      })
-    }
     if(!values.video_link){
       return res.json({
         error:"Please Add Video Link",
