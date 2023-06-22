@@ -26,6 +26,9 @@ const TemplateSchema = new Schema(
     },
     Creater_name: {
       type: String,
+    }, 
+    Clips: {
+      type: String,
     },
     Creater_desc: {
       type: String,

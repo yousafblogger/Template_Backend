@@ -35,6 +35,7 @@ let Usage_detail = "";
 let Creater_name = "";
 let Creater_desc = "";
 let Tags = "";
+let Clips=""
 export const Fetch = async (req, res, next) => {
   try {
     const { id } = req.body;
@@ -55,6 +56,7 @@ export const Fetch = async (req, res, next) => {
         Usage_detail = $(".video-detail .actions-detail").text();
         Creater_name = $(".video-detail .author-name").text();
         Creater_desc = $(".video-detail .author-desc").text();
+        Clips = $('.video-detail .detail-extra > div:nth-child(2)').text();
         return res.json({
           Template_Name,
           Template_ID,
@@ -62,6 +64,7 @@ export const Fetch = async (req, res, next) => {
           Creater_desc,
           Creater_name,
           Tags,
+          Clips,
           status:true
         });
       } else {
@@ -115,6 +118,12 @@ export const create = async (req, res) => {
     if(!values.video_link){
       return res.json({
         error:"Please Add Video Link",
+        status:false
+      })
+    }
+    if(!values.Clips){
+      return res.json({
+        error:"Please Add Clips",
         status:false
       })
     }
