@@ -18,8 +18,7 @@ app.use(morgan("dev"));
 //resolve Frontend and Backend
 app.use(
   cors({
-    origin: ["http://localhost:3002",
-    "https://template-admin-e7jaq2p2x-yousafblogger.vercel.app"],
+    origin: "*",
   })
 );
 //Request Limit
