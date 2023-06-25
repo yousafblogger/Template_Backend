@@ -7,6 +7,11 @@ const CategorySchema = new Schema(
       trim: true,
       required: true,
     },
+   sequence: {
+      type: Number,
+      trim: true,
+      required: true,
+    },
     slug: {
       type: String,
       unique: true,

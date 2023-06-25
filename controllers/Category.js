@@ -4,6 +4,7 @@ export const create = async (req, res) => {
   try {
     const { values } = req.body;
     if (!values.name) return res.json({ error: "Please Add Name",status:false });
+    if (!values.sequence) return res.json({ error: "Please Add sequence",status:false });
     const slug = slugify(values.name);
     const category = await Category.findOne({ slug });
     if (category) return res.json({ error: "Category Already Exist",status:false });
