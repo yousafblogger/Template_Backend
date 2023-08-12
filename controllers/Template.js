@@ -12,7 +12,13 @@ cron.schedule("0 */2 * * *", async () => {
       request(url1, async function (error, response, html) {
         if (!error && response.statusCode == 200) {
           const $ = cheerio.load(html);
-          Usage_detail = $(".video-detail .actions-detail").text();
+          var usage_detail = $(".video-detail .actions-detail").text();
+          // Split the string by comma and trim the parts
+          var parts = usage_detail.split(",");
+          // Extract uses and likes
+          var uses = parts[1].trim();
+          var likes = parts[2].trim();
+          Usage_detail = uses + ", " + likes + ",";
           const templates = await Template.findByIdAndUpdate(
             template[i]._id,
             { Usage_detail: Usage_detail },
@@ -20,14 +26,14 @@ cron.schedule("0 */2 * * *", async () => {
               new: true,
             }
           );
-          console.log("Ok")
+          console.log("Ok");
         } else {
-          console.log("Error")
+          console.log("Error");
         }
       });
     }
   } catch (error) {
-    console.log("Error")
+    console.log("Error");
   }
 });
 let Template_Name = "";
@@ -35,28 +41,36 @@ let Usage_detail = "";
 let Creater_name = "";
 let Creater_desc = "";
 let Tags = "";
-let Clips=""
+let Clips = "";
 export const Fetch = async (req, res, next) => {
   try {
     const { id } = req.body;
-    if(!id){
+    if (!id) {
       return res.json({
-        error:"Please Add ID",
-        status:false
-      })
+        error: "Please Add ID",
+        status: false,
+      });
     }
     let Template_ID = id;
     const url2 = `https://www.capcut.com/template-detail/${id}`;
     request(url2, function (error, response, html) {
       if (!error && response.statusCode == 200) {
         const $ = cheerio.load(html);
-        const name = $(".video-detail .template-title").text();
-        Template_Name = name.split(" | ")[0].trim();
-        Tags = name.split(" | ")[1].trim();
-        Usage_detail = $(".video-detail .actions-detail").text();
+        Template_Name = $(".video-detail .template-title").text();
+        Tags = $(".video-detail .desc-detail").text();
+        var usage_detail = $(".video-detail .actions-detail").text();
+        // Split the string by comma and trim the parts
+        var parts = usage_detail.split(",");
+        // Extract uses and likes
+        var uses = parts[1].trim();
+        var likes = parts[2].trim();
+        Usage_detail = uses + ", " + likes + ",";
         Creater_name = $(".video-detail .author-name").text();
         Creater_desc = $(".video-detail .author-desc").text();
-        Clips = $('.video-detail .detail-extra > div:nth-child(2)').text();
+        var numberOfClips = $(
+          ".video-detail .detail-extra > div:nth-child(1)"
+        ).text();
+        Clips = numberOfClips.match(/\d+/)[0];
         return res.json({
           Template_Name,
           Template_ID,
@@ -65,108 +79,104 @@ export const Fetch = async (req, res, next) => {
           Creater_name,
           Tags,
           Clips,
-          status:true
+          status: true,
         });
       } else {
         return res.json({
           error: error,
-          status:false
+          status: false,
         });
       }
     });
   } catch (error) {
     return res.json({
       error: "Fetch Template Failed",
-      status:false
+      status: false,
     });
   }
 };
 export const create = async (req, res) => {
   try {
     const { values } = req.body;
-    const temp = await Template.findOne({Template_ID:values.Template_ID});
-    if(temp){
+    const temp = await Template.findOne({ Template_ID: values.Template_ID });
+    if (temp) {
       return res.json({
-        error:"Template Already Exist",
-        status:false
-      })
+        error: "Template Already Exist",
+        status: false,
+      });
     }
-    if(!values.Template_Name){
+    if (!values.Template_Name) {
       return res.json({
-        error:"Please Add Template Name",
-        status:false
-      })
+        error: "Please Add Template Name",
+        status: false,
+      });
     }
-    if(!values.Creater_name){
+    if (!values.Creater_name) {
       return res.json({
-        error:"Please Add Creater Name",
-        status:false
-      })
+        error: "Please Add Creater Name",
+        status: false,
+      });
     }
-    if(!values.Usage_detail){
+    if (!values.Usage_detail) {
       return res.json({
-        error:"Please Add Usage Detail",
-        status:false
-      })
+        error: "Please Add Usage Detail",
+        status: false,
+      });
     }
-    if(!values.Template_ID){
+    if (!values.Template_ID) {
       return res.json({
-        error:"Please Add Template Id",
-        status:false
-      })
+        error: "Please Add Template Id",
+        status: false,
+      });
     }
-    if(!values.video_link){
+    if (!values.video_link) {
       return res.json({
-        error:"Please Add Video Link",
-        status:false
-      })
+        error: "Please Add Video Link",
+        status: false,
+      });
     }
-    if(!values.Clips){
+    if (!values.Clips) {
       return res.json({
-        error:"Please Add Clips",
-        status:false
-      })
+        error: "Please Add Clips",
+        status: false,
+      });
     }
-    if(!values.poster_link){
+    if (!values.poster_link) {
       return res.json({
-        error:"Please Add Poster Link",
-        status:false
-      })
+        error: "Please Add Poster Link",
+        status: false,
+      });
     }
-    if(!values.Tags){
+    if (!values.Tags) {
       return res.json({
-        error:"Please Add Tags",
-        status:false
-      })
+        error: "Please Add Tags",
+        status: false,
+      });
     }
-   
+
     const template = await new Template(values).save();
-    return res.json({template, status:true});
+    return res.json({ template, status: true });
   } catch (error) {
     return res.json({
       error: "Template Create Failed",
-      status:false
+      status: false,
     });
   }
 };
 export const update = async (req, res) => {
   try {
     const { values } = req.body;
-    const templates = await Template.findByIdAndUpdate(
-      req.params._id,
-       values,
-      {
-        new: true,
-      }
-    );
+    const templates = await Template.findByIdAndUpdate(req.params._id, values, {
+      new: true,
+    });
     return res.json({
       templates,
-      status:true
+      status: true,
     });
   } catch (error) {
     return res.json({
       error: "Template update Failed",
-      status:false
+      status: false,
     });
   }
 };
@@ -179,7 +189,7 @@ export const deletetemplate = async (req, res) => {
   } catch (error) {
     return res.json({
       error: "Delete Failed",
-      status:false
+      status: false,
     });
   }
 };
@@ -191,12 +201,12 @@ export const AllTemplates = async (req, res) => {
       .populate("category", "_id name");
     return res.json({
       templates,
-      status:true
+      status: true,
     });
   } catch (error) {
     res.json({
       error: "Fetch Templates Failed",
-      status:false
+      status: false,
     });
   }
 };
@@ -207,17 +217,17 @@ export const SingleTemplate = async (req, res) => {
       "_id name"
     );
     if (template) {
-      return res.json({ template, status:true });
+      return res.json({ template, status: true });
     } else {
       return res.json({
         error: "Not Found",
-        status:false
+        status: false,
       });
     }
   } catch (error) {
     res.json({
       error: "Fetch Single template Failed",
-      status:false
+      status: false,
     });
   }
 };

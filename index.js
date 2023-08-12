@@ -18,7 +18,7 @@ app.use(morgan("dev"));
 //resolve Frontend and Backend
 app.use(
   cors({
-    origin: "*",
+    origin:["https://template-admin-ochre.vercel.app"],
   })
 );
 //Request Limit
