@@ -10,7 +10,7 @@ import { requireSigin } from "../middleware";
 const router = express.Router();
 
 router.post("/category/create", requireSigin, create);
-router.put("/category/update/:slug", requireSigin, update);
+router.postt("/category/update/:slug", requireSigin, update);
 router.delete("/category/delete/:slug", requireSigin, deletecategory);
 router.get("/category/AllCategories", AllCategories);
 router.get("/category/SingleCategory/:slug", SingleCategory);
