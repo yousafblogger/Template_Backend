@@ -18,7 +18,7 @@ app.use(morgan("dev"));
 //resolve Frontend and Backend
 app.use(
   cors({
-    origin:["https://template-admin-ochre.vercel.app"],
+    origin:["https://template-admin-ochre.vercel.app","http://localhost:3002"],
   })
 );
 //Request Limit
