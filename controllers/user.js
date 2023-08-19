@@ -56,9 +56,8 @@ export const login = async (req, res) => {
         status:false
       });
     }
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "3d",
-    });
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+
     user.password = undefined;
     user.secret = undefined;
     return res.json({
