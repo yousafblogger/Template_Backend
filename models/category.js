@@ -12,6 +12,10 @@ const CategorySchema = new Schema(
       trim: true,
       required: true,
     },
+    Template_Count: {
+      type: Number,
+      trim: true,
+    },
     slug: {
       type: String,
       unique: true,

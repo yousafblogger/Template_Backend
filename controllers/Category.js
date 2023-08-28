@@ -1,4 +1,5 @@
 import Category from "../models/category";
+import Template from "../models/template"
 import slugify from "slugify";
 export const create = async (req, res) => {
   try {
@@ -55,11 +56,17 @@ export const deletecategory = async (req, res) => {
 };
 export const AllCategories = async (req, res) => {
   try {
+    
     const category = await Category.find().sort({ createdAt: -1 });
+    for (let i = 0; i < category.length; i++) {
+      const templateCount = await Template.countDocuments({ category: category[i]._id });
+      category[i].Template_Count = templateCount;
+    }
     return res.json({
       category,
       status: true,
     });
+    
   } catch (error) {
     res.json({
       error: "Fetch Category Failed",
