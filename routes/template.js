@@ -5,6 +5,7 @@ import {
   create,
   deletetemplate,
   SingleTemplate,
+  CategoryTemplate,
   update,
 } from "../controllers/Template";
 import { requireSigin } from "../middleware";
@@ -16,5 +17,6 @@ router.put("/template/update/:_id", requireSigin, update);
 router.delete("/template/delete/:_id", requireSigin, deletetemplate);
 router.get("/template/AllTemplates", AllTemplates);
 router.get("/template/SingleTemplate/:_id", SingleTemplate);
+router.get("/template/AllTemplates/:id", CategoryTemplate);
 
 module.exports = router;

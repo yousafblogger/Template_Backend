@@ -231,3 +231,24 @@ export const SingleTemplate = async (req, res) => {
     });
   }
 };
+export const CategoryTemplate = async (req, res) => {
+  try {
+    const template = await Template.find({category: req.params.id }).populate(
+      "category",
+      "_id name"
+    );
+    if (template) {
+      return res.json({ template, status: true });
+    } else {
+      return res.json({
+        error: "Not Found",
+        status: false,
+      });
+    }
+  } catch (error) {
+    res.json({
+      error: "Fetch Category template Failed",
+      status: false,
+    });
+  }
+};
