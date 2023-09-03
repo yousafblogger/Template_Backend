@@ -26,9 +26,9 @@ cron.schedule("0 */2 * * *", async () => {
               new: true,
             }
           );
-          console.log("Ok","------",template[i].Template_ID);
+          console.log("Ok", "------", template[i].Template_ID);
         } else {
-          console.log(" Temp Error","------",template[i].Template_ID);
+          console.log(" Temp Error", "------", template[i].Template_ID);
         }
       });
     }
@@ -59,7 +59,7 @@ export const Fetch = async (req, res, next) => {
         Template_Name = $(".video-detail .template-title").text();
         Tags = $(".video-detail .desc-detail").text();
         var usage_detail = $(".video-detail .actions-detail").text();
-        if(!usage_detail){
+        if (!usage_detail) {
           return res.json({
             error: "Template Fetch Failed",
             status: false,
@@ -201,17 +201,17 @@ export const deletetemplate = async (req, res) => {
 };
 export const DeleteAllTemplate = async (req, res) => {
   try {
-    const {ids}=req.body
-    for(let i=0;i<ids.length;i++){
+    const { ids } = req.body;
+    for (let i = 0; i < ids.length; i++) {
       await Template.findOneAndDelete({ _id: ids[i] });
     }
     return res.json({
-      message:"Successfully Deleted",
+      message: "Successfully Deleted",
       status: true,
     });
   } catch (error) {
     return res.json({
-      error:"Delete Failed",
+      error: "Delete Failed",
       message: "Delete Failed",
       status: false,
     });
@@ -256,7 +256,7 @@ export const SingleTemplate = async (req, res) => {
 };
 export const CategoryTemplate = async (req, res) => {
   try {
-    const template = await Template.find({category: req.params.id }).populate(
+    const template = await Template.find({ category: req.params.id }).populate(
       "category",
       "_id name"
     );
@@ -277,100 +277,138 @@ export const CategoryTemplate = async (req, res) => {
 };
 export const BulkTemplate = async (req, res) => {
   try {
-    const {file} = req.files;
+    const { file } = req.files;
     // Check File
     if (!file) {
-      return res.json({ error: 'No file uploaded',status:false });
+      return res.json({ error: "No file uploaded", status: false });
     }
     // Check File Type
-    if (file.type!=="text/csv" && file.type!=="application/vnd.ms-excel" ) {
-      return res.json({ error: 'Please Upload CSV File Only',status:false });
+    if (file.type !== "text/csv" && file.type !== "application/vnd.ms-excel") {
+      return res.json({ error: "Please Upload CSV File Only", status: false });
     }
     // Parse CSV FILE
-    const fileData=csv.parse(file.path,{
-      header:true,
+    const fileData = csv.parse(file.path, {
+      header: true,
     });
     //Check FIle header
-    const sheetData=fileData[0].data;
+    const sheetData = fileData[0].data;
     const headerRow = sheetData[0];
-    const requiredColumns = ['Template_ID', 'poster_link', 'video_link'];
+    const requiredColumns = ["Template_ID", "poster_link", "video_link"];
     function doesHeaderContainValues(headerRow, targetValues) {
       const headerKeys = Object.keys(headerRow);
       return targetValues.every((value) => headerKeys.includes(value));
     }
-    const headerContainsRequiredColumns = doesHeaderContainValues(headerRow, requiredColumns);
-if (!headerContainsRequiredColumns) {
-  return res.json({
-    error:"Please Check Your Column Header. It should be like this: Template_ID,category,video_link ,poster_link",
-    status:false
-  });
-} 
-// Function to validate a row
-function validateRow(row) {
-  return row.hasOwnProperty('Template_ID') &&
-    row.hasOwnProperty('poster_link') &&
-    row.hasOwnProperty('video_link');
-}
+    const headerContainsRequiredColumns = doesHeaderContainValues(
+      headerRow,
+      requiredColumns
+    );
+    if (!headerContainsRequiredColumns) {
+      return res.json({
+        error:
+          "Please Check Your Column Header. It should be like this: Template_ID,category,video_link ,poster_link",
+        status: false,
+      });
+    }
+    // Function to validate a row
+    function validateRow(row) {
+      return (
+        row.hasOwnProperty("Template_ID") &&
+        row.hasOwnProperty("poster_link") &&
+        row.hasOwnProperty("video_link")
+      );
+    }
 
-// Iterate through each row and validate
-for (let i = 0; i < sheetData.length; i++) {
-  const row = sheetData[i];
-  const isValid = validateRow(row);
+    // Iterate through each row and validate
+    for (let i = 0; i < sheetData.length; i++) {
+      const row = sheetData[i];
+      const isValid = validateRow(row);
 
-  if (!isValid) {
-   return res.json({
-    error: "Bulk Upload template Failed.Please Fill Data in every Row",
-    status: false,
-  });
-  }
-}
-// Now check template exist if not then save in DB
-for (let i = 0; i < sheetData.length; i++) {
-const temp = await Template.findOne({ Template_ID: sheetData[i].Template_ID});
-if (temp) {
-  return res.json({
-    error: "Template Already Exist",
-    status: false,
-  });
-}
-}
-return res.json(sheetData);
-// const url2 = `https://www.capcut.com/template-detail/${id}`;
-// request(url2, function (error, response, html) {
-//   if (!error && response.statusCode == 200) {
-//     const $ = cheerio.load(html);
-//     Template_Name = $(".video-detail .template-title").text();
-//     Tags = $(".video-detail .desc-detail").text();
-//     var usage_detail = $(".video-detail .actions-detail").text();
-//     // Split the string by comma and trim the parts
-//     var parts = usage_detail.split(",");
-//     // Extract uses and likes
-//     var uses = parts[1].trim();
-//     var likes = parts[2].trim();
-//     Usage_detail = uses + ", " + likes + ",";
-//     Creater_name = $(".video-detail .author-name").text();
-//     Creater_desc = $(".video-detail .author-desc").text();
-//     var numberOfClips = $(
-//       ".video-detail .detail-extra > div:nth-child(1)"
-//     ).text();
-//     Clips = numberOfClips.match(/\d+/)[0];
-//     return res.json({
-//       Template_Name,
-//       Template_ID,
-//       Usage_detail,
-//       Creater_desc,
-//       Creater_name,
-//       Tags,
-//       Clips,
-//       status: true,
-//     });
-//   } else {
-//     return res.json({
-//       error: error,
-//       status: false,
-//     });
-//   }
-// });
+      if (!isValid) {
+        return res.json({
+          error: "Bulk Upload template Failed.Please Fill Data in every Row",
+          status: false,
+        });
+      }
+    }
+    let Template_ID = "";
+    let Template_Name = "";
+    let Usage_detail = "";
+    let Creater_name = "";
+    let Creater_desc = "";
+    let Tags = "";
+    let Clips = "";
+    let poster_link = "";
+    let video_link = "";
+    let category = "";
+    // Now check template exist if not then save in DB
+    for (let i = 0; i < sheetData.length; i++) {
+      const temp = await Template.findOne({
+        Template_ID: sheetData[i].Template_ID,
+      });
+      if (temp) {
+        console.log("Template Already Exist:", temp.Template_ID);
+      } else {
+        const url = `https://www.capcut.com/template-detail/${sheetData[i].Template_ID}`;
+        request(url, async function (error, response, html) {
+          if (!error && response.statusCode == 200) {
+            const $ = cheerio.load(html);
+            var usage_detail = $(".video-detail .actions-detail").text();
+            if (!usage_detail) {
+              console.log("Fetch Template Failed", sheetData[i].Template_ID);
+            } else {
+              Template_ID = sheetData[i].Template_ID;
+              category = sheetData[i].category;
+              poster_link = sheetData[i].poster_link;
+              video_link = sheetData[i].video_link;
+              Template_Name = $(".video-detail .template-title").text();
+              Tags = $(".video-detail .desc-detail").text();
+              // Split the string by comma and trim the parts
+              var parts = usage_detail.split(",");
+              // Extract uses and likes
+              var uses = parts[1].trim();
+              var likes = parts[2].trim();
+              Usage_detail = uses + ", " + likes + ",";
+              Creater_name = $(".video-detail .author-name").text();
+              Creater_desc = $(".video-detail .author-desc").text();
+              var numberOfClips = $(
+                ".video-detail .detail-extra > div:nth-child(1)"
+              ).text();
+              Clips = numberOfClips.match(/\d+/)[0];
+              //Save Data in Database
+              let values = {
+                Template_ID: Template_ID,
+                Template_Name: Template_Name,
+                Usage_detail: Usage_detail,
+                Creater_name: Creater_name,
+                Creater_desc: Creater_desc,
+                Tags: Tags,
+                Clips: Clips,
+                poster_link: poster_link,
+                video_link: video_link,
+                category: category,
+              };
+              if (
+                Template_ID &&
+                Template_Name &&
+                Usage_detail &&
+                Creater_name &&
+                Tags &&
+                Clips &&
+                poster_link &&
+                video_link
+              ) {
+                const template = await new Template(values).save();
+              }
+            }
+          }
+        });
+      }
+    }
+    //Send response
+    return res.json({
+      message: "Templates Added Successfully",
+      status: true,
+    });
   } catch (error) {
     res.json({
       error: "Bulk Upload template Failed",
