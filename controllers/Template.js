@@ -2,13 +2,13 @@ import Template from "../models/template";
 const request = require("request");
 const cheerio = require("cheerio");
 const cron = require("node-cron");
-
+import csv from "node-xlsx";
 cron.schedule("0 */2 * * *", async () => {
   let Usage_detail = "";
   try {
     const template = await Template.find();
     for (let i = 0; i < template.length; i++) {
-      const url1 = `https://www.capcut.com/watch/${template[i].Template_ID}`;
+      const url1 = `https://www.capcut.com/template-detail/${template[i].Template_ID}`;
       request(url1, async function (error, response, html) {
         if (!error && response.statusCode == 200) {
           const $ = cheerio.load(html);
@@ -26,9 +26,9 @@ cron.schedule("0 */2 * * *", async () => {
               new: true,
             }
           );
-          console.log("Ok");
+          console.log("Ok","------",template[i].Template_ID);
         } else {
-          console.log("Error");
+          console.log(" Temp Error","------",template[i].Template_ID);
         }
       });
     }
@@ -52,13 +52,19 @@ export const Fetch = async (req, res, next) => {
       });
     }
     let Template_ID = id;
-    const url2 = `https://www.capcut.com/template-detail/${id}`;
+    const url2 = `https://www.capcut.com/template-detail/7218184337613850000`;
     request(url2, function (error, response, html) {
       if (!error && response.statusCode == 200) {
         const $ = cheerio.load(html);
         Template_Name = $(".video-detail .template-title").text();
         Tags = $(".video-detail .desc-detail").text();
         var usage_detail = $(".video-detail .actions-detail").text();
+        if(!usage_detail){
+          return res.json({
+            error: "Template Fetch Failed",
+            status: false,
+          });
+        }
         // Split the string by comma and trim the parts
         var parts = usage_detail.split(",");
         // Extract uses and likes
@@ -83,7 +89,7 @@ export const Fetch = async (req, res, next) => {
         });
       } else {
         return res.json({
-          error: error,
+          error: "Template Fetch Failed",
           status: false,
         });
       }
@@ -265,6 +271,109 @@ export const CategoryTemplate = async (req, res) => {
   } catch (error) {
     res.json({
       error: "Fetch Category template Failed",
+      status: false,
+    });
+  }
+};
+export const BulkTemplate = async (req, res) => {
+  try {
+    const {file} = req.files;
+    // Check File
+    if (!file) {
+      return res.json({ error: 'No file uploaded',status:false });
+    }
+    // Check File Type
+    if (file.type!=="text/csv" && file.type!=="application/vnd.ms-excel" ) {
+      return res.json({ error: 'Please Upload CSV File Only',status:false });
+    }
+    // Parse CSV FILE
+    const fileData=csv.parse(file.path,{
+      header:true,
+    });
+    //Check FIle header
+    const sheetData=fileData[0].data;
+    const headerRow = sheetData[0];
+    const requiredColumns = ['Template_ID', 'poster_link', 'video_link'];
+    function doesHeaderContainValues(headerRow, targetValues) {
+      const headerKeys = Object.keys(headerRow);
+      return targetValues.every((value) => headerKeys.includes(value));
+    }
+    const headerContainsRequiredColumns = doesHeaderContainValues(headerRow, requiredColumns);
+if (!headerContainsRequiredColumns) {
+  return res.json({
+    error:"Please Check Your Column Header. It should be like this: Template_ID,category,video_link ,poster_link",
+    status:false
+  });
+} 
+// Function to validate a row
+function validateRow(row) {
+  return row.hasOwnProperty('Template_ID') &&
+    row.hasOwnProperty('poster_link') &&
+    row.hasOwnProperty('video_link');
+}
+
+// Iterate through each row and validate
+for (let i = 0; i < sheetData.length; i++) {
+  const row = sheetData[i];
+  const isValid = validateRow(row);
+
+  if (!isValid) {
+   return res.json({
+    error: "Bulk Upload template Failed.Please Fill Data in every Row",
+    status: false,
+  });
+  }
+}
+// Now check template exist if not then save in DB
+for (let i = 0; i < sheetData.length; i++) {
+const temp = await Template.findOne({ Template_ID: sheetData[i].Template_ID});
+if (temp) {
+  return res.json({
+    error: "Template Already Exist",
+    status: false,
+  });
+}
+}
+return res.json(sheetData);
+// const url2 = `https://www.capcut.com/template-detail/${id}`;
+// request(url2, function (error, response, html) {
+//   if (!error && response.statusCode == 200) {
+//     const $ = cheerio.load(html);
+//     Template_Name = $(".video-detail .template-title").text();
+//     Tags = $(".video-detail .desc-detail").text();
+//     var usage_detail = $(".video-detail .actions-detail").text();
+//     // Split the string by comma and trim the parts
+//     var parts = usage_detail.split(",");
+//     // Extract uses and likes
+//     var uses = parts[1].trim();
+//     var likes = parts[2].trim();
+//     Usage_detail = uses + ", " + likes + ",";
+//     Creater_name = $(".video-detail .author-name").text();
+//     Creater_desc = $(".video-detail .author-desc").text();
+//     var numberOfClips = $(
+//       ".video-detail .detail-extra > div:nth-child(1)"
+//     ).text();
+//     Clips = numberOfClips.match(/\d+/)[0];
+//     return res.json({
+//       Template_Name,
+//       Template_ID,
+//       Usage_detail,
+//       Creater_desc,
+//       Creater_name,
+//       Tags,
+//       Clips,
+//       status: true,
+//     });
+//   } else {
+//     return res.json({
+//       error: error,
+//       status: false,
+//     });
+//   }
+// });
+  } catch (error) {
+    res.json({
+      error: "Bulk Upload template Failed",
       status: false,
     });
   }
