@@ -52,7 +52,7 @@ export const Fetch = async (req, res, next) => {
       });
     }
     let Template_ID = id;
-    const url2 = `https://www.capcut.com/template-detail/7218184337613850000`;
+    const url2 = `https://www.capcut.com/template-detail/${id}`;
     request(url2, function (error, response, html) {
       if (!error && response.statusCode == 200) {
         const $ = cheerio.load(html);
