@@ -7,6 +7,7 @@ import {
   SingleTemplate,
   CategoryTemplate,
   update,
+  DeleteAllTemplate,
 } from "../controllers/Template";
 import { requireSigin } from "../middleware";
 const router = express.Router();
@@ -18,5 +19,6 @@ router.delete("/template/delete/:_id", requireSigin, deletetemplate);
 router.get("/template/AllTemplates", AllTemplates);
 router.get("/template/SingleTemplate/:_id", SingleTemplate);
 router.get("/template/AllTemplates/:id", CategoryTemplate);
+router.post("/template/deleteAll",requireSigin, DeleteAllTemplate);
 
 module.exports = router;

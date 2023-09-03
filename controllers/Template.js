@@ -193,7 +193,24 @@ export const deletetemplate = async (req, res) => {
     });
   }
 };
-
+export const DeleteAllTemplate = async (req, res) => {
+  try {
+    const {ids}=req.body
+    for(let i=0;i<ids.length;i++){
+      await Template.findOneAndDelete({ _id: ids[i] });
+    }
+    return res.json({
+      message:"Successfully Deleted",
+      status: true,
+    });
+  } catch (error) {
+    return res.json({
+      error:"Delete Failed",
+      message: "Delete Failed",
+      status: false,
+    });
+  }
+};
 export const AllTemplates = async (req, res) => {
   try {
     const templates = await Template.find()
