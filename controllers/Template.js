@@ -305,7 +305,7 @@ export const CategoryTemplate = async (req, res) => {
     const template = await Template.find({ category: req.params.id }).populate(
       "category",
       "_id name"
-    );
+    ).sort({createdAt:-1});
     if (template) {
       return res.json({ template, status: true });
     } else {
@@ -326,7 +326,7 @@ export const SequenceTemplate = async (req, res) => {
     const template = await Template.find({ sequence: 0 }).populate(
       "category",
       "_id name"
-    );
+    ).sort({createdAt:-1});
     if (template) {
       return res.json({ template, status: true });
     } else {
