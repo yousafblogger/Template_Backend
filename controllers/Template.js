@@ -217,15 +217,54 @@ export const DeleteAllTemplate = async (req, res) => {
     });
   }
 };
-export const AllTemplates = async (req, res) => {
-  const { offset , limit } = req.query;
+export const UpdateTrendingTemplate = async (req, res) => {
   try {
-    const totalsize= await Template.countDocuments();
-    const currentpage=offset || 1;
-    const perpageLimit= limit || 20;
-    const templates = await Template.find().skip((currentpage-1)*perpageLimit)
+    const { ids,reset } = req.body;
+    if(reset){
+      for (let i = 0; i < ids.length; i++) {
+        await Template.findOneAndUpdate(
+          { _id: ids[i] },
+          {
+            sequence: "",
+          },
+          { new: true }
+        );
+      }
+    }else{
+      for (let i = 0; i < ids.length; i++) {
+        await Template.findOneAndUpdate(
+          { _id: ids[i] },
+          {
+            sequence: 0,
+          },
+          { new: true }
+        );
+      }
+    }
+   
+    return res.json({
+      message: "Trending Templates Updated",
+      status: true,
+    });
+  } catch (error) {
+    return res.json({
+      error: "Trending Templates Update Failed",
+      message: "Trending Templates Update Failed",
+      status: false,
+    });
+  }
+};
+export const AllTemplates = async (req, res) => {
+  const { offset, limit } = req.query;
+  try {
+    const totalsize = await Template.countDocuments();
+    const currentpage = offset || 1;
+    const perpageLimit = limit || 20;
+    const templates = await Template.find()
+      .skip((currentpage - 1) * perpageLimit)
       .sort({ createdAt: -1 })
-      .populate("category", "_id name").limit(perpageLimit);
+      .populate("category", "_id name")
+      .limit(perpageLimit);
     return res.json({
       totalsize,
       templates,
@@ -285,7 +324,7 @@ export const CategoryTemplate = async (req, res) => {
 export const BulkTemplate = async (req, res) => {
   try {
     const { file } = req.files;
-  // Check File
+    // Check File
     if (!file) {
       return res.json({ error: "No file uploaded", status: false });
     }

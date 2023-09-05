@@ -36,6 +36,10 @@ const TemplateSchema = new Schema(
     Tags: {
       type: String,
     },
+    sequence: {
+      type: Number,
+      trim: true,
+    },
   },
   { timestamps: true }
 );
