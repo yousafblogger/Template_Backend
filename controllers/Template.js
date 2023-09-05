@@ -219,8 +219,8 @@ export const DeleteAllTemplate = async (req, res) => {
 };
 export const UpdateTrendingTemplate = async (req, res) => {
   try {
-    const { ids,reset } = req.body;
-    if(reset){
+    const { ids, reset } = req.body;
+    if (reset) {
       for (let i = 0; i < ids.length; i++) {
         await Template.findOneAndUpdate(
           { _id: ids[i] },
@@ -230,7 +230,7 @@ export const UpdateTrendingTemplate = async (req, res) => {
           { new: true }
         );
       }
-    }else{
+    } else {
       for (let i = 0; i < ids.length; i++) {
         await Template.findOneAndUpdate(
           { _id: ids[i] },
@@ -241,7 +241,7 @@ export const UpdateTrendingTemplate = async (req, res) => {
         );
       }
     }
-   
+
     return res.json({
       message: "Trending Templates Updated",
       status: true,
@@ -258,13 +258,24 @@ export const AllTemplates = async (req, res) => {
   const { offset, limit } = req.query;
   try {
     const totalsize = await Template.countDocuments();
-    const currentpage = offset
-    const perpageLimit = limit
-    const templates = await Template.find()
-      .skip((currentpage - 1) * perpageLimit)
-      .sort({ createdAt: -1 })
+    const currentpage = offset;
+    const perpageLimit = limit;
+    const template = await Template.find()
+      .sort({ createdAt: -1 }) // Sort by createdAt in descending order and sequence in ascending order
       .populate("category", "_id name")
+      .skip((currentpage - 1) * perpageLimit)
       .limit(perpageLimit);
+      const templatesWithSequenceZero = [];
+      const templatesWithoutSequenceZero = [];
+      template.forEach(template => {
+              if (template.sequence === 0) {
+                  templatesWithSequenceZero.push(template);
+              } else {
+                  templatesWithoutSequenceZero.push(template);
+              }         
+      });      
+      // Concatenate the two arrays to get the desired order
+      const templates = templatesWithSequenceZero.concat(templatesWithoutSequenceZero);
     return res.json({
       totalsize,
       templates,
@@ -302,10 +313,9 @@ export const SingleTemplate = async (req, res) => {
 };
 export const CategoryTemplate = async (req, res) => {
   try {
-    const template = await Template.find({ category: req.params.id }).populate(
-      "category",
-      "_id name"
-    ).sort({createdAt:-1});
+    const template = await Template.find({ category: req.params.id })
+      .populate("category", "_id name")
+      .sort({ createdAt: -1 });
     if (template) {
       return res.json({ template, status: true });
     } else {
@@ -323,10 +333,9 @@ export const CategoryTemplate = async (req, res) => {
 };
 export const SequenceTemplate = async (req, res) => {
   try {
-    const template = await Template.find({ sequence: 0 }).populate(
-      "category",
-      "_id name"
-    ).sort({createdAt:-1});
+    const template = await Template.find({ sequence: 0 })
+      .populate("category", "_id name")
+      .sort({ createdAt: -1 });
     if (template) {
       return res.json({ template, status: true });
     } else {
