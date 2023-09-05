@@ -218,12 +218,19 @@ export const DeleteAllTemplate = async (req, res) => {
   }
 };
 export const AllTemplates = async (req, res) => {
+  const { offset , limit } = req.query;
   try {
-    const templates = await Template.find()
+    const totalsize= await Template.countDocuments();
+    const currentpage=offset || 1;
+    const perpageLimit= limit || 20;
+    const templates = await Template.find().skip((currentpage-1)*perpageLimit)
       .sort({ createdAt: -1 })
-      .populate("category", "_id name");
+      .populate("category", "_id name").limit(perpageLimit);
     return res.json({
+      totalsize,
       templates,
+      offset,
+      limit,
       status: true,
     });
   } catch (error) {
@@ -278,7 +285,7 @@ export const CategoryTemplate = async (req, res) => {
 export const BulkTemplate = async (req, res) => {
   try {
     const { file } = req.files;
-    // Check File
+  // Check File
     if (!file) {
       return res.json({ error: "No file uploaded", status: false });
     }
