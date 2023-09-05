@@ -258,8 +258,8 @@ export const AllTemplates = async (req, res) => {
   const { offset, limit } = req.query;
   try {
     const totalsize = await Template.countDocuments();
-    const currentpage = offset || 1;
-    const perpageLimit = limit || 20;
+    const currentpage = offset
+    const perpageLimit = limit
     const templates = await Template.find()
       .skip((currentpage - 1) * perpageLimit)
       .sort({ createdAt: -1 })
