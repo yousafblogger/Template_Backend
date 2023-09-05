@@ -321,6 +321,27 @@ export const CategoryTemplate = async (req, res) => {
     });
   }
 };
+export const SequenceTemplate = async (req, res) => {
+  try {
+    const template = await Template.find({ sequence: 0 }).populate(
+      "category",
+      "_id name"
+    );
+    if (template) {
+      return res.json({ template, status: true });
+    } else {
+      return res.json({
+        error: "Not Found",
+        status: false,
+      });
+    }
+  } catch (error) {
+    res.json({
+      error: "Fetch Sequence template Failed",
+      status: false,
+    });
+  }
+};
 export const BulkTemplate = async (req, res) => {
   try {
     const { file } = req.files;

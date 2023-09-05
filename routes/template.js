@@ -10,6 +10,7 @@ import {
   DeleteAllTemplate,
   BulkTemplate,
   UpdateTrendingTemplate,
+  SequenceTemplate,
 } from "../controllers/Template";
 import { requireSigin } from "../middleware";
 const router = express.Router();
@@ -22,6 +23,7 @@ router.delete("/template/delete/:_id", requireSigin, deletetemplate);
 router.get("/template/AllTemplates", AllTemplates);
 router.get("/template/SingleTemplate/:_id", SingleTemplate);
 router.get("/template/AllTemplates/:id", CategoryTemplate);
+router.get("/template/Sequence/", SequenceTemplate);
 router.post("/template/deleteAll",requireSigin, DeleteAllTemplate);
 router.post("/template/BulkUpload",requireSigin,formidable({ maxFileSize: 5 * 1024 * 1024 }),
 BulkTemplate);
