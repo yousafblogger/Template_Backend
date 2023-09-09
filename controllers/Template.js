@@ -263,18 +263,25 @@ export const AllTemplates = async (req, res) => {
     const template = await Template.find()
       .sort({ createdAt: -1 }) // Sort by createdAt in descending order and sequence in ascending order
       .populate("category", "_id name");
-      const templatesWithSequenceZero = [];
-      const templatesWithoutSequenceZero = [];
-      template.forEach(template => {
-              if (template.sequence === 0) {
-                  templatesWithSequenceZero.push(template);
-              } else {
-                  templatesWithoutSequenceZero.push(template);
-              }         
-      });      
-      // Concatenate the two arrays to get the desired order
-      const Alltemplates = templatesWithSequenceZero.concat(templatesWithoutSequenceZero);
-      const templates=Alltemplates.slice((currentpage - 1) * perpageLimit,perpageLimit)
+    const templatesWithSequenceZero = [];
+    const templatesWithoutSequenceZero = [];
+    template.forEach((template) => {
+      if (template.sequence === 0) {
+        templatesWithSequenceZero.push(template);
+      } else {
+        templatesWithoutSequenceZero.push(template);
+      }
+    });
+    // Concatenate the two arrays to get the desired order
+    const Alltemplates = templatesWithSequenceZero.concat(
+      templatesWithoutSequenceZero
+    );
+    // Calculate the starting and ending indexes for the current page
+    const startIndex = (currentpage - 1) * perpageLimit;
+    const endIndex = startIndex + perpageLimit;
+
+    // Use slice to extract the templates for the current page
+    const templates = Alltemplates.slice(startIndex, endIndex);
     return res.json({
       totalsize,
       templates,
