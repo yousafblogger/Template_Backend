@@ -262,9 +262,7 @@ export const AllTemplates = async (req, res) => {
     const perpageLimit = limit;
     const template = await Template.find()
       .sort({ createdAt: -1 }) // Sort by createdAt in descending order and sequence in ascending order
-      .populate("category", "_id name")
-      .skip((currentpage - 1) * perpageLimit)
-      .limit(perpageLimit);
+      .populate("category", "_id name");
       const templatesWithSequenceZero = [];
       const templatesWithoutSequenceZero = [];
       template.forEach(template => {
@@ -275,7 +273,8 @@ export const AllTemplates = async (req, res) => {
               }         
       });      
       // Concatenate the two arrays to get the desired order
-      const templates = templatesWithSequenceZero.concat(templatesWithoutSequenceZero);
+      const Alltemplates = templatesWithSequenceZero.concat(templatesWithoutSequenceZero);
+      const templates=Alltemplates.slice((currentpage - 1) * perpageLimit,perpageLimit)
     return res.json({
       totalsize,
       templates,
