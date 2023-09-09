@@ -281,7 +281,7 @@ export const AllTemplates = async (req, res) => {
     const endIndex = startIndex + perpageLimit;
 
     // Use slice to extract the templates for the current page
-    const templates = Alltemplates.slice(startIndex, endIndex);
+    const templates =offset?Alltemplates.slice(startIndex, endIndex):Alltemplates;
     return res.json({
       totalsize,
       templates,
