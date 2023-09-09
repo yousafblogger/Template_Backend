@@ -277,9 +277,9 @@ export const AllTemplates = async (req, res) => {
       templatesWithoutSequenceZero
     );
     // Calculate the starting and ending indexes for the current page
-    const startIndex = (currentpage - 1) * perpageLimit;
-    const endIndex = startIndex + perpageLimit;
-
+    const startIndex = ((currentpage - 1 )* perpageLimit);
+    const endIndex =Math.round(startIndex)+Math.round(limit);
+    console.log(startIndex,"_____",endIndex)
     // Use slice to extract the templates for the current page
     const templates =offset?Alltemplates.slice(startIndex, endIndex):Alltemplates;
     return res.json({
