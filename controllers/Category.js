@@ -43,7 +43,7 @@ export const update = async (req, res) => {
 };
 export const deletecategory = async (req, res) => {
   try {
-    await Category.findOneAndDelete({ slug: req.params.slug });
+    await Category.findByIdAndDelete({ _id: req.params.id });
     return res.json({
       status: true,
     });

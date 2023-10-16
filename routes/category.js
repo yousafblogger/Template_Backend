@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post("/category/create", requireSigin, create);
 router.post("/category/update/:slug", requireSigin, update);
-router.delete("/category/delete/:slug", requireSigin, deletecategory);
+router.delete("/category/delete/:id", requireSigin, deletecategory);
 router.get("/category/AllCategories", AllCategories);
 router.get("/category/SingleCategory/:slug", SingleCategory);
 module.exports = router;
