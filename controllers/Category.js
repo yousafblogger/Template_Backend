@@ -57,6 +57,28 @@ export const deletecategory = async (req, res) => {
 export const AllCategories = async (req, res) => {
   try {
     
+    const category = await Category.find({status:true}).sort({ createdAt: -1 });
+    const TotalSize= await Category.countDocuments();
+    for (let i = 0; i < category.length; i++) {
+      const templateCount = await Template.countDocuments({ category: category[i]._id });
+      category[i].Template_Count = templateCount;
+    }
+    return res.json({
+      category,
+      TotalSize,
+      status: true,
+    });
+    
+  } catch (error) {
+    res.json({
+      error: "Fetch Category Failed",
+      status:false
+    });
+  }
+};
+export const AllAdminCategories = async (req, res) => {
+  try {
+    
     const category = await Category.find().sort({ createdAt: -1 });
     const TotalSize= await Category.countDocuments();
     for (let i = 0; i < category.length; i++) {

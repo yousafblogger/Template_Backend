@@ -5,6 +5,7 @@ import {
   deletecategory,
   AllCategories,
   SingleCategory,
+  AllAdminCategories,
 } from "../controllers/Category";
 import { requireSigin } from "../middleware";
 const router = express.Router();
@@ -13,5 +14,6 @@ router.post("/category/create", requireSigin, create);
 router.post("/category/update/:slug", requireSigin, update);
 router.delete("/category/delete/:id", requireSigin, deletecategory);
 router.get("/category/AllCategories", AllCategories);
+router.get("/category/AllAdminCategories", AllAdminCategories);
 router.get("/category/SingleCategory/:slug", SingleCategory);
 module.exports = router;
