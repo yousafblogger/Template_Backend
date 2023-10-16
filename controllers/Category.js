@@ -58,12 +58,14 @@ export const AllCategories = async (req, res) => {
   try {
     
     const category = await Category.find().sort({ createdAt: -1 });
+    const TotalSize= await Category.countDocuments();
     for (let i = 0; i < category.length; i++) {
       const templateCount = await Template.countDocuments({ category: category[i]._id });
       category[i].Template_Count = templateCount;
     }
     return res.json({
       category,
+      TotalSize,
       status: true,
     });
     
