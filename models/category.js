@@ -12,6 +12,10 @@ const CategorySchema = new Schema(
       trim: true,
       required: true,
     },
+    status: {
+      type:Boolean,
+      default:true,
+    },
     Template_Count: {
       type: Number,
       trim: true,
