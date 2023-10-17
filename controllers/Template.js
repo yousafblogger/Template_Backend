@@ -421,7 +421,7 @@ export const BulkTemplate = async (req, res) => {
     let Clips = "";
     let poster_link = "";
     let video_link = "";
-    let category = "";
+    let category = [];
     // Now check template exist if not then save in DB
     for (let i = 0; i < sheetData.length; i++) {
       const temp = await Template.findOne({
@@ -439,7 +439,12 @@ export const BulkTemplate = async (req, res) => {
               console.log("Fetch Template Failed", sheetData[i].Template_ID);
             } else {
               Template_ID = sheetData[i].Template_ID;
-              category = sheetData[i].category;
+              const categoryData = sheetData[i].category;
+              if(categoryData){
+              category=categoryData.split(',');
+              }else{
+                category=[];
+              }
               poster_link = sheetData[i].poster_link;
               video_link = sheetData[i].video_link;
               Template_Name = $(".video-detail .template-title").text();
