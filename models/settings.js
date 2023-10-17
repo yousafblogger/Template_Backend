@@ -15,6 +15,9 @@ const settingSchema = new Schema(
     },
     Redirect_url:{
       type:String
+    },
+    Poster_link:{
+      type:String
     }
   },
   { timestamps: true }
