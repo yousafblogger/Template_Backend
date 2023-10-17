@@ -262,7 +262,7 @@ export const AllTemplates = async (req, res) => {
     const perpageLimit = limit;
     const template = await Template.find()
       .sort({ createdAt: -1 }) // Sort by createdAt in descending order and sequence in ascending order
-      .populate("category", "name slug");
+      .populate("category", "_id name");
     const templatesWithSequenceZero = [];
     const templatesWithoutSequenceZero = [];
     template.forEach((template) => {
@@ -282,7 +282,6 @@ export const AllTemplates = async (req, res) => {
     console.log(startIndex,"_____",endIndex)
     // Use slice to extract the templates for the current page
     const templates =offset?Alltemplates.slice(startIndex, endIndex):Alltemplates;
-    console.log(templates[2]);
     return res.json({
       totalsize,
       templates,
@@ -422,7 +421,7 @@ export const BulkTemplate = async (req, res) => {
     let Clips = "";
     let poster_link = "";
     let video_link = "";
-    let category = [];
+    let category = "";
     // Now check template exist if not then save in DB
     for (let i = 0; i < sheetData.length; i++) {
       const temp = await Template.findOne({
@@ -440,12 +439,7 @@ export const BulkTemplate = async (req, res) => {
               console.log("Fetch Template Failed", sheetData[i].Template_ID);
             } else {
               Template_ID = sheetData[i].Template_ID;
-              const categoryData = sheetData[i].category;
-              if(categoryData){
-              category=categoryData.split(',');
-              }else{
-                category=[];
-              }
+              category = sheetData[i].category;
               poster_link = sheetData[i].poster_link;
               video_link = sheetData[i].video_link;
               Template_Name = $(".video-detail .template-title").text();
