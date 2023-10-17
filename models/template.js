@@ -17,10 +17,10 @@ const TemplateSchema = new Schema(
     poster_link: {
       type: String,
     },
-    category: {
+    category:[{
       type: Schema.Types.ObjectId,
       ref: "Category",
-    },
+    }],
     Usage_detail: {
       type: String,
     },
