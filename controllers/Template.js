@@ -277,11 +277,13 @@ export const AllTemplates = async (req, res) => {
       templatesWithoutSequenceZero
     );
     // Calculate the starting and ending indexes for the current page
-    const startIndex = ((currentpage - 1 )* perpageLimit);
-    const endIndex =Math.round(startIndex)+Math.round(limit);
-    console.log(startIndex,"_____",endIndex)
+    const startIndex = (currentpage - 1) * perpageLimit;
+    const endIndex = Math.round(startIndex) + Math.round(limit);
+    console.log(startIndex, "_____", endIndex);
     // Use slice to extract the templates for the current page
-    const templates =offset?Alltemplates.slice(startIndex, endIndex):Alltemplates;
+    const templates = offset
+      ? Alltemplates.slice(startIndex, endIndex)
+      : Alltemplates;
     return res.json({
       totalsize,
       templates,
@@ -318,12 +320,39 @@ export const SingleTemplate = async (req, res) => {
   }
 };
 export const CategoryTemplate = async (req, res) => {
+  const { offset, limit } = req.query;
   try {
-    const template = await Template.find({ category: req.params.id })
+    const currentpage = offset;
+    const perpageLimit = limit;
+    const totalsize = await Template.find({
+      category: req.params.id,
+    }).countDocuments();
+    const templates = await Template.find({ category: req.params.id })
       .populate("category", "_id name")
       .sort({ createdAt: -1 });
+    const templatesWithSequenceZero = [];
+    const templatesWithoutSequenceZero = [];
+    templates.forEach((template) => {
+      if (template.sequence === 0) {
+        templatesWithSequenceZero.push(template);
+      } else {
+        templatesWithoutSequenceZero.push(template);
+      }
+    });
+    // Concatenate the two arrays to get the desired order
+    const Alltemplates = templatesWithSequenceZero.concat(
+      templatesWithoutSequenceZero
+    );
+    // Calculate the starting and ending indexes for the current page
+    const startIndex = (currentpage - 1) * perpageLimit;
+    const endIndex = Math.round(startIndex) + Math.round(limit);
+    console.log(startIndex, "_____", endIndex);
+    // Use slice to extract the templates for the current page
+    const template = offset
+      ? Alltemplates.slice(startIndex, endIndex)
+      : Alltemplates;
     if (template) {
-      return res.json({ template, status: true });
+      return res.json({ totalsize, template, offset, limit, status: true });
     } else {
       return res.json({
         error: "Not Found",
@@ -440,10 +469,10 @@ export const BulkTemplate = async (req, res) => {
             } else {
               Template_ID = sheetData[i].Template_ID;
               const categoryData = sheetData[i].category;
-              if(categoryData){
-              category=categoryData.split(',');
-              }else{
-                category=[];
+              if (categoryData) {
+                category = categoryData.split(",");
+              } else {
+                category = [];
               }
               poster_link = sheetData[i].poster_link;
               video_link = sheetData[i].video_link;
