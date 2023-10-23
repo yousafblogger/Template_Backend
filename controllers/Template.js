@@ -471,8 +471,9 @@ export const BulkTemplate = async (req, res) => {
               const categoryData = sheetData[i].category;
               if (categoryData) {
                 category = categoryData.split(",");
+                category.push('6497e7b30c5a8414ed89f736');
               } else {
-                category = [];
+                category = ['6497e7b30c5a8414ed89f736'];
               }
               poster_link = sheetData[i].poster_link;
               video_link = sheetData[i].video_link;
