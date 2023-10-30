@@ -393,9 +393,17 @@ export const BulkTemplate = async (req, res) => {
     if (!file) {
       return res.json({ error: "No file uploaded", status: false });
     }
+
     // Check File Type
-    if (file.type !== "text/csv" && file.type !== "application/vnd.ms-excel") {
-      return res.json({ error: "Please Upload CSV File Only", status: false });
+    if (
+      file.type !== "application/vnd.ms-excel" &&
+      file.type !==
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ) {
+      return res.json({
+        error: "Please Upload xls and xlsx File Only",
+        status: false,
+      });
     }
     // Parse CSV FILE
     const fileData = csv.parse(file.path, {
@@ -470,10 +478,10 @@ export const BulkTemplate = async (req, res) => {
               Template_ID = sheetData[i].Template_ID;
               const categoryData = sheetData[i].category;
               if (categoryData) {
-                category = categoryData.split(",");
-                category.push('6497e7b30c5a8414ed89f736');
+                category = categoryData.split(/\s*,\s*/);
+                category.push("6497e7b30c5a8414ed89f736");
               } else {
-                category = ['6497e7b30c5a8414ed89f736'];
+                category = ["6497e7b30c5a8414ed89f736"];
               }
               poster_link = sheetData[i].poster_link;
               video_link = sheetData[i].video_link;

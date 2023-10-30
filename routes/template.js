@@ -25,7 +25,7 @@ router.get("/template/SingleTemplate/:_id", SingleTemplate);
 router.get("/template/AllTemplates/:id", CategoryTemplate);
 router.get("/template/Sequence/", SequenceTemplate);
 router.post("/template/deleteAll",requireSigin, DeleteAllTemplate);
-router.post("/template/BulkUpload",requireSigin,formidable({ maxFileSize: 5 * 1024 * 1024 }),
+router.post("/template/BulkUpload",formidable({ maxFileSize: 5 * 1024 * 1024 }),
 BulkTemplate);
 
 module.exports = router;
